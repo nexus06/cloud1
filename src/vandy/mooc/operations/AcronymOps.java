@@ -171,10 +171,11 @@ public class AcronymOps
                 // form" of the acronym.
                 mAcronymCache.put(result.getSf(),
                                   longForms);
-
+                
                 // Return the results that were just stored in the
                 // cache.
                 return longForms;
+
             }
         } catch (Exception e) {
             Log.v(TAG,

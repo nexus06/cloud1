@@ -5,6 +5,8 @@ import java.util.List;
 
 import vandy.mooc.provider.AcronymContract;
 import vandy.mooc.provider.AcronymContract.AcronymEntry;
+import vandy.mooc.provider.AcronymDatabaseHelper;
+import vandy.mooc.retrofit.AcronymData;
 import vandy.mooc.retrofit.AcronymData.AcronymExpansion;
 import android.app.AlarmManager;
 import android.content.ContentValues;
@@ -101,7 +103,7 @@ public class ContentProviderTimeoutCache
             else {
                 // TODO -- replace "0" with the expiration time of
                 // given acronym that's obtained from the cursor.
-                Long expirationTime = 0L;
+                Long expirationTime = cursor.getLong(cursor.getColumnIndex(AcronymEntry.COLUMN_EXPIRATION_TIME));
                 
                 // Check if the acronym is expired. If true, then
                 // remove it.
@@ -220,9 +222,11 @@ public class ContentProviderTimeoutCache
         	
         	 ContentValues cv = new ContentValues();
         	 AcronymExpansion item = longForms.get(i);
+        	 cv.put(AcronymContract.AcronymEntry.COLUMN_ACRONYM, acronym);
         	 cv.put(AcronymContract.AcronymEntry.COLUMN_LONG_FORM, item.getLf());
         	 cv.put(AcronymContract.AcronymEntry.COLUMN_FREQUENCY, item.getFreq());
         	 cv.put(AcronymContract.AcronymEntry.COLUMN_SINCE, item.getSince());
+        	 cv.put(AcronymContract.AcronymEntry.COLUMN_EXPIRATION_TIME, expirationTime);
         	 cvArray[i] = cv;
         }
 
@@ -248,8 +252,7 @@ public class ContentProviderTimeoutCache
 
         // TODO - delete the row(s) associated with an acronym.
         mContext.getContentResolver().delete
-        (AcronymEntry.buildAcronymUri(Long.valueOf(acronym)),
-        		SELECTION_ACRONYM,
+        (AcronymEntry.CONTENT_URI, SELECTION_ACRONYM,
          selectionArgs);
 
     }
